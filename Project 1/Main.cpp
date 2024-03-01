@@ -110,8 +110,8 @@ int main(){
 
   }
 
-
-  for(auto book: catalog){
+  moveAll("Anti Racist", catalog,cart);
+  for(auto book: cart){
     book.print();
   }
   std::cout<<"bye"<<std::endl;
