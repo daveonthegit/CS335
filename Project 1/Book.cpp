@@ -1,46 +1,60 @@
 #include "Book.hpp"
 
     // write and document all methods in this file.
-    Book::Book() :title_(""),author_(""),ISBN_(0),icon_(new int[80]),price_(0.00),blurb_("")
+    Book::Book() :title_(""),author_(""),ISBN_(0),icon_(nullptr),price_(0.00),blurb_("")
     {
     }
 
     Book::~Book()
     {
-        delete icon_;
+        delete[] icon_;
     }
 
+    // Copy Constructor
     Book::Book(const Book& rhs)
+        : title_(rhs.title_), author_(rhs.author_), ISBN_(rhs.ISBN_),
+        icon_(new int[80]), price_(rhs.price_), keywords_(rhs.keywords_),
+        blurb_(rhs.blurb_)
     {
-        title_=rhs.title_;
-        author_=rhs.author_;
-        ISBN_=rhs.ISBN_;
-        icon_=new int{*rhs.icon_};
-        price_=rhs.price_;
-        keywords_=rhs.keywords_;
-        blurb_=rhs.blurb_;
+        // Copy the contents of the icon array
+        std::copy(rhs.icon_, rhs.icon_ + 80, icon_);
     }
+
 
     Book& Book::operator=(const Book& rhs)
     {
-        Book copy =rhs;
+        Book copy(rhs);
         std::swap(*this,copy);
         return *this;
     }
 
-    Book::Book(Book&& rhs):title_{rhs.title_},author_{rhs.author_},ISBN_{rhs.ISBN_},
-    icon_{rhs.icon_},price_{rhs.price_},keywords_{std::move(rhs.keywords_)},blurb_{rhs.blurb_}
+    // Move Constructor
+    Book::Book(Book&& rhs)
+        : title_(std::move(rhs.title_)), author_(std::move(rhs.author_)),
+        ISBN_(std::move(rhs.ISBN_)), icon_(rhs.icon_), price_(std::move(rhs.price_)),
+        keywords_(std::move(rhs.keywords_)), blurb_(std::move(rhs.blurb_))
     {
-        rhs.icon_=nullptr;
+        // Reset the source object
+        rhs.icon_ = nullptr;
     }
 
+
+    // Move Assignment Operator
     Book& Book::operator=(Book&& rhs)
     {
-        std::swap(title_,rhs.title_);
-        std::swap(author_,rhs.author_);
+        // Check for self-assignment
+        if (this != &rhs) {
+            // Swap with the source object
+            std::swap(title_, rhs.title_);
+            std::swap(author_, rhs.author_);
+            std::swap(ISBN_, rhs.ISBN_);
+            std::swap(icon_, rhs.icon_);
+            std::swap(price_, rhs.price_);
+            std::swap(keywords_, rhs.keywords_);
+            std::swap(blurb_, rhs.blurb_);
+        }
         return *this;
     }
-
     const std::string& Book::getTitle() const
     {
         return title_;
@@ -78,7 +92,9 @@
 
     void Book::setIcon(int* icon)
     {
-        this->icon_=icon;
+        delete[] icon_;
+        icon_ = new int[80];
+        std::copy(icon, icon + 80, icon_);
     }
 
     float Book::getPrice() const
@@ -117,9 +133,15 @@
         std::cout<<"Author: "<<this->author_<<std::endl;
         std::cout<<"ISBN: "<<this->ISBN_<<std::endl;
         std::cout<<"Icon: ";
-        for(int i =0;i<80;i++)
-        {
-            std::cout<<icon_[i]<<" ";
+    // Print Icon if not null
+        if (icon_ != nullptr) {
+            std::cout << "Icon: ";
+            for (int i = 0; i < 80; i++) {
+                std::cout << icon_[i] << " ";
+            }
+            std::cout << std::endl;
+        } else {
+            std::cout << "Icon: (null)" << std::endl;
         }
         std::cout<<std::endl;
         std::cout<<"Price: $"<<std::fixed<<std::setprecision(2)<<this->price_<<std::endl;

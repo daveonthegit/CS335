@@ -8,7 +8,7 @@
 #include "MoveAll.hpp"
 
 int main(){
-  
+  std::cout<<"hi"<<std::endl;
   std::vector<Book> catalog, cart;
 
   // open file
@@ -68,6 +68,7 @@ int main(){
     for (int i=0 ; i<80; ++i){
       if (!(numstring >> next_number))
         std::cout << "Error reading file format" << std::endl;
+      
       numarray[i] = next_number;
     }
     temp.setIcon(numarray);
@@ -109,8 +110,10 @@ int main(){
 
   }
 
-  // write your test cases here
-  
 
+  for(auto book: catalog){
+    book.print();
+  }
+  std::cout<<"bye"<<std::endl;
   return 0;
 }
